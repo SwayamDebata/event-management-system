@@ -52,39 +52,8 @@ app.all('*', (req, res) => {
 
 app.use(errorHandler);
 
-const findAvailablePort = (startPort) => {
-  return new Promise((resolve, reject) => {
-    const server = require('net').createServer();
-    
-    server.listen(startPort, () => {
-      const port = server.address().port;
-      server.close(() => resolve(port));
-    });
-    
-    server.on('error', (err) => {
-      if (err.code === 'EADDRINUSE') {
-        findAvailablePort(startPort + 1).then(resolve).catch(reject);
-      } else {
-        reject(err);
-      }
-    });
-  });
-};
-
-const startServer = async () => {
-  try {
-    const availablePort = await findAvailablePort(PORT);
-    
-    const server = app.listen(availablePort, () => {
-      console.log(`Event Management Server is running on port ${availablePort}`);
-    });
-
-    return server;
-  } catch (error) {
-    process.exit(1);
-  }
-};
-
-startServer();
+app.listen(PORT, () => {
+  console.log(`Event Management Server is running on port ${PORT}`);
+});
 
 module.exports = app;
